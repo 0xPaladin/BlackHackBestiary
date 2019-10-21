@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>The Black Hack Bestiary</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="src/main.css">
+  </head>
+  <body>
+    <div id="spinner" class="lds-dual-ring"></div>
+    <div id="ui-main" align="center">
+      <!--MENU---------------------------------------------->
+      <div class="d-flex flex-row m-1" style="z-index:100;position:fixed;">
+        <div>
+          <a class="btn btn-info btn-sm" data-toggle="collapse" href="#menu-list" role="button">
+            <img src="media/md-menu.svg" height="20" width="20">
+          </a>
+        </div>
+        <div>
+          <div class="card collapse" id="menu-list" style="width:200px;">
+            <div class="card card-body p-1">
+              <button type="button" class="btn btn-block btn-info" @click="create()" data-toggle="collapse" href="#menu-list">New</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--END MENU---------------------------------------------->
+      <!--OVERHEAD---------------------------------------------->
+      <div class="overlay p-1 border" style="top:0;">
+        <h1>Bestairy</h1>
+        <div v-if="!newMonster">
+          <div class="input-group">
+            <select class="custom-select" v-model="loadId">
+              <option v-for="m in monsters" :value="m[0]">{{m[1].name}}</option>
+            </select>
+          </div>
+          <stat-block class="m-1 px-1" :M="selected" v-if="loadId"></stat-block>
+          <div class="btn-group btn-group-sm" role="group" v-if="loadId">
+            <button type="button" class="btn btn-info" @click="edit()">Edit</button>
+            <button type="button" class="btn btn-success" @click="copy()">Copy</button>
+            <button type="button" class="btn btn-info" @click="exIds.push(loadId)">Export</button>
+          </div>
+          <div v-if="exIds.length>0" v-cloak>
+            <h5>Exports</h5>
+            <div class="btn-group btn-group-sm" role="group" v-for="(n,i) in exports.names">
+              <button type="button" class="btn btn-light">{{n}}</button>
+              <button type="button" class="btn btn-warning" @click="exIds.splice(i,1)">&#10008;</button>
+            </div>
+            <div class="font-sm">{{exports.data}}</div>
+          </div>
+        </div>
+        <div class="p-1 m-1" v-if="newMonster" v-cloak>
+          <stat-block :M="newMonster"></stat-block>
+          <div class="input-group">
+            <input class="form-control" type="text" placeholder="Name" v-model="newMonster.name">
+            <div class="input-group-prepend">
+              <span class="input-group-text">HD</span>
+            </div>
+            <input class="form-control" type="number" v-model="newMonster.HD" style="max-width:100px;">
+            <div class="input-group-append">
+              <button class="btn btn-success" type="button" @click="save()">&#10004;</button>
+              <button class="btn btn-warning" type="button" @click="newMonster=null">&#10008;</button>
+            </div>
+          </div>
+          <textarea class="form-control" placeholder="About the monster" v-model="newMonster.text"></textarea>
+          <attack v-for="(a,i) in newMonster.atks" :all="newMonster.atks" :i="i"></attack>
+          <ability v-for="(a,i) in newMonster.ab" :all="newMonster.ab" :i="i"></ability>
+          <div>
+            <div class="dropdown">
+              <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">Add Attack/Ability</button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="#" @click="addPart('atk')">Add Attack</a>
+                <a class="dropdown-item" href="#" @click="addPart('ab')">Add Ability</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </body>
+  <script src="lib/ethers-v4.min.js"></script>
+  <script src="lib/vue.2.5.16.min.js"></script>
+  <script src="lib/jquery-3.3.1.min.js"></script>
+  <script src="lib/popper.1.12.3.min.js"></script>
+  <script src="lib/bootstrap.min.js"></script>
+  <script type="module" src="src/main.js"></script>
+</html>
